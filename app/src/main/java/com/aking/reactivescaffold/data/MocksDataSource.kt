@@ -29,8 +29,9 @@ class MocksDataSource {
             val list = mutableListOf<Workspace>()
             while (true) {
                 list.add(Workspace(list.size, "workspace${list.size + 1}"))
-                emit(list)
-                delay(5000)
+                val copy = list.toList()
+                emit(copy)
+                delay(3000)
             }
         }
     }

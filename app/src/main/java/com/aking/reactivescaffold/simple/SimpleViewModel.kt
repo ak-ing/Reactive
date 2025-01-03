@@ -4,14 +4,12 @@ import androidx.lifecycle.viewModelScope
 import com.aking.reactive.base.BaseViewModel
 import com.aking.reactive.base.Intent
 import com.aking.reactive.base.Reducer
-import com.aking.reactive.widget.logI
 import com.aking.reactivescaffold.data.Workspace
 import kotlinx.coroutines.launch
 
 data class SimpleState(
     val name: String = "Simple",
     val workspaces: List<Workspace> = emptyList(),
-    val bgUrl: String? = "https://picsum.photos/200/300",
     val showMsg: String? = null
 )
 
@@ -32,7 +30,6 @@ class SimpleViewModel : BaseViewModel<SimpleState>(SimpleState()), Reducer<Simpl
     override fun onInitialize() {
         viewModelScope.launch {
             repository.getWorkspaces().collect {
-                logI("$it")
                 update { copy(workspaces = it) }
             }
         }
@@ -49,7 +46,10 @@ class SimpleViewModel : BaseViewModel<SimpleState>(SimpleState()), Reducer<Simpl
         repository.getText(timeMillis).onSuccess {
             update { copy(name = it) }
         }.onFailure {
-            update { copy(showMsg = it.message) }
+            update {
+                it.printStackTrace()
+                copy(showMsg = it.message)
+            }
         }
     }
 
