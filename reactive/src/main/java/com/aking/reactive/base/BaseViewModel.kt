@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.update
 /**
  * Description:
  * 封装状态流，方便使用
+ * [请避免在 ViewModel 的 init 块或构造函数中启动异步操作](https://developer.android.google.cn/topic/architecture/ui-layer/state-production?hl=zh-cn#initializing-state-production)
  * Created by Rick at 2024-10-17 19:50.
  */
 abstract class BaseViewModel<S>(initialState: S) : ViewModel() {

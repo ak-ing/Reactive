@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 /**
+ * [请避免在 ViewModel 的 init 块或构造函数中启动异步操作](https://developer.android.google.cn/topic/architecture/ui-layer/state-production?hl=zh-cn#initializing-state-production)
  * @author Created by Ak on 2024-12-26 20:46.
  */
 abstract class BaseAndroidViewModel<S>(app: Application, initialState: S) : AndroidViewModel(app) {
