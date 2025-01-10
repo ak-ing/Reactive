@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.annotation.MainThread
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LifecycleOwner
 import com.aking.reactive.extended.collectWithLifecycle
 import com.aking.reactive.widget.logI
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.update
  */
 abstract class BaseAndroidViewModel<S>(app: Application, initialState: S) : AndroidViewModel(app) {
     private var initializeCalled = false
+    private var distinct = Distinct(initialState)
 
     private val uiState = MutableStateFlow(initialState)
     val stateFlow = uiState.asStateFlow()
@@ -29,13 +31,8 @@ abstract class BaseAndroidViewModel<S>(app: Application, initialState: S) : Andr
     @MainThread
     fun initialize(reactive: Reactive<S>? = null) {
         when (reactive) {
-            is Fragment -> {
-                stateFlow.collectWithLifecycle(reactive, collector = reactive::render)
-            }
-
-            is ComponentActivity -> {
-                stateFlow.collectWithLifecycle(reactive, collector = reactive::render)
-            }
+            is Fragment -> seedPipeline(reactive.viewLifecycleOwner, reactive)
+            is ComponentActivity -> seedPipeline(reactive, reactive)
         }
         if (initializeCalled) return
         initializeCalled = true
@@ -50,6 +47,17 @@ abstract class BaseAndroidViewModel<S>(app: Application, initialState: S) : Andr
 
     protected fun setState(state: S) {
         uiState.value = state
+    }
+
+    /**
+     * seed the state production pipeline
+     */
+    private fun seedPipeline(lifecycleOwner: LifecycleOwner, reactive: Reactive<S>) {
+        stateFlow.collectWithLifecycle(lifecycleOwner, collector = {
+            distinct.onEach(it) {
+                reactive.render(it, distinct)
+            }
+        })
     }
 
     override fun onCleared() {
