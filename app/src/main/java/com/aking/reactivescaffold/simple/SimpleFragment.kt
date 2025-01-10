@@ -51,7 +51,7 @@ class SimpleFragment : BaseFragment<FragmentSimpleBinding>(R.layout.fragment_sim
 
     override suspend fun render(state: SimpleState, distinct: Distinct<SimpleState>) {
         logI("render: $state")
-        distinct(SimpleState::name) {
+        distinct({ it.name}) {
             binding.textView.text = it
         }
         distinct({ it.workspaces }) {
