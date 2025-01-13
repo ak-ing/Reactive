@@ -4,8 +4,8 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.aking.reactive.base.BaseFragment
-import com.aking.reactive.base.Distinct
 import com.aking.reactive.base.Reactive
+import com.aking.reactive.base.StateDiff
 import com.aking.reactive.dsl.render
 import com.aking.reactive.dsl.renderColumn
 import com.aking.reactive.extended.collectWithLifecycle
@@ -49,14 +49,16 @@ class SimpleFragment : BaseFragment<FragmentSimpleBinding>(R.layout.fragment_sim
     }
 
 
-    override suspend fun render(state: SimpleState, distinct: Distinct<SimpleState>) {
+    override suspend fun render(state: SimpleState, diff: StateDiff<SimpleState>) {
         logI("render: $state")
-        distinct({ it.name}) {
+        diff({ it.name }) {
             binding.textView.text = it
         }
-        distinct({ it.workspaces }) {
+
+        diff({ it.workspaces }) {
             binding.recyclerView.render(it)
         }
+
         // 消息状态不为空时显示消息，显示后置空清楚消息状态
         state.showMsg?.let { showMsg(it) }
     }

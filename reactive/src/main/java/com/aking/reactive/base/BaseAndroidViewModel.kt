@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
  */
 abstract class BaseAndroidViewModel<S>(app: Application, initialState: S) : AndroidViewModel(app) {
     private var initializeCalled = false
-    private var distinct = Distinct(initialState)
+    private var stateDiff = StateDiff(initialState)
 
     private val uiState = MutableStateFlow(initialState)
     val stateFlow = uiState.asStateFlow()
@@ -54,8 +54,8 @@ abstract class BaseAndroidViewModel<S>(app: Application, initialState: S) : Andr
      */
     private fun seedPipeline(lifecycleOwner: LifecycleOwner, reactive: Reactive<S>) {
         stateFlow.collectWithLifecycle(lifecycleOwner, collector = {
-            distinct.onEach(it) {
-                reactive.render(it, distinct)
+            stateDiff.onEach(it) {
+                reactive.render(it, stateDiff)
             }
         })
     }
