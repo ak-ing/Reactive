@@ -17,6 +17,7 @@
 
 package com.aking.reactive.memoization
 
+import androidx.collection.lruCache
 import java.util.concurrent.ConcurrentHashMap
 
 /* 😨 Function memoization */
@@ -337,9 +338,24 @@ private data class MemoizeKey22<out P1, out P2, out P3, out P4, out P5, out P6, 
     override fun invoke(f: (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22) -> R) = f(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22)
 }
 
+sealed interface MemoizeStrategy {
+    /** 默认记忆化策略 */
+    data object Memoized : MemoizeStrategy
+
+    /** 带有LurCache缓存的记忆化策略,限制缓存函数的数量 */
+    data class MemoizeLimitEntry(val maxFunctionCount: Int = 50) : MemoizeStrategy
+}
+
 private class MemoizedHandler<F, in K : MemoizedCall<F, R>, out R>(val f: F) {
     private val m = ConcurrentHashMap<K, R>()
     operator fun invoke(k: K): R {
         return m.getOrPut(k, { k(f) })
+    }
+}
+
+private class LruCacheHandler<F, in K : MemoizedCall<F, R>, out R : Any>(val f: F, maxSize: Int = 50) {
+    private val c = lruCache<K, R>(maxSize = maxSize, create = { k -> k(f) })
+    operator fun invoke(k: K): R {
+        return c[k] ?: k(f)
     }
 }
