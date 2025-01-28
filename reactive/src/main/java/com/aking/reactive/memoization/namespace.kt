@@ -26,9 +26,15 @@ import java.util.concurrent.ConcurrentHashMap
  * 🤔 函数记忆化
  * [Kotlin purity and function memoization](https://jorgecastillo.dev/kotlin-purity-and-function-memoization)
  */
-fun <R> (() -> R).memoize(): () -> R {
+fun <R : Any> (() -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): () -> R {
     return object : () -> R {
-        private val m = MemoizedHandler<() -> R, MemoizeKey0<R>, R>(this@memoize)
+        private val m: IMemoizedHandler<() -> R, MemoizeKey0<R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(): R = m(MemoizeKey0(0))
     }
 }
@@ -36,9 +42,15 @@ fun <R> (() -> R).memoize(): () -> R {
 /**
  * @see memoize
  */
-fun <P1, R> ((P1) -> R).memoize(): (P1) -> R {
+fun <P1, R : Any> ((P1) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1) -> R {
     return object : (P1) -> R {
-        private val m = MemoizedHandler<((P1) -> R), MemoizeKey1<P1, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1) -> R), MemoizeKey1<P1, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1) = m(MemoizeKey1(p1))
     }
 }
@@ -46,9 +58,15 @@ fun <P1, R> ((P1) -> R).memoize(): (P1) -> R {
 /**
  * @see memoize
  */
-fun <P1, P2, R> ((P1, P2) -> R).memoize(): (P1, P2) -> R {
+fun <P1, P2, R : Any> ((P1, P2) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2) -> R {
     return object : (P1, P2) -> R {
-        private val m = MemoizedHandler<((P1, P2) -> R), MemoizeKey2<P1, P2, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2) -> R), MemoizeKey2<P1, P2, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2) = m(MemoizeKey2(p1, p2))
     }
 }
@@ -56,58 +74,106 @@ fun <P1, P2, R> ((P1, P2) -> R).memoize(): (P1, P2) -> R {
 /**
  * @see memoize
  */
-fun <P1, P2, P3, R> ((P1, P2, P3) -> R).memoize(): (P1, P2, P3) -> R {
+fun <P1, P2, P3, R : Any> ((P1, P2, P3) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3) -> R {
     return object : (P1, P2, P3) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3) -> R), MemoizeKey3<P1, P2, P3, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3) -> R), MemoizeKey3<P1, P2, P3, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3) = m(MemoizeKey3(p1, p2, p3))
     }
 }
 
-fun <P1, P2, P3, P4, R> ((P1, P2, P3, P4) -> R).memoize(): (P1, P2, P3, P4) -> R {
+fun <P1, P2, P3, P4, R : Any> ((P1, P2, P3, P4) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4) -> R {
     return object : (P1, P2, P3, P4) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4) -> R), MemoizeKey4<P1, P2, P3, P4, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4) -> R), MemoizeKey4<P1, P2, P3, P4, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4) = m(MemoizeKey4(p1, p2, p3, p4))
     }
 }
 
-fun <P1, P2, P3, P4, P5, R> ((P1, P2, P3, P4, P5) -> R).memoize(): (P1, P2, P3, P4, P5) -> R {
+fun <P1, P2, P3, P4, P5, R : Any> ((P1, P2, P3, P4, P5) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4, P5) -> R {
     return object : (P1, P2, P3, P4, P5) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4, P5) -> R), MemoizeKey5<P1, P2, P3, P4, P5, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4, P5) -> R), MemoizeKey5<P1, P2, P3, P4, P5, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5) = m(MemoizeKey5(p1, p2, p3, p4, p5))
     }
 }
 
-fun <P1, P2, P3, P4, P5, P6, R> ((P1, P2, P3, P4, P5, P6) -> R).memoize(): (P1, P2, P3, P4, P5, P6) -> R {
+fun <P1, P2, P3, P4, P5, P6, R : Any> ((P1, P2, P3, P4, P5, P6) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4, P5, P6) -> R {
     return object : (P1, P2, P3, P4, P5, P6) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4, P5, P6) -> R), MemoizeKey6<P1, P2, P3, P4, P5, P6, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4, P5, P6) -> R), MemoizeKey6<P1, P2, P3, P4, P5, P6, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6) = m(MemoizeKey6(p1, p2, p3, p4, p5, p6))
     }
 }
 
-fun <P1, P2, P3, P4, P5, P6, P7, R> ((P1, P2, P3, P4, P5, P6, P7) -> R).memoize(): (P1, P2, P3, P4, P5, P6, P7) -> R {
+fun <P1, P2, P3, P4, P5, P6, P7, R : Any> ((P1, P2, P3, P4, P5, P6, P7) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4, P5, P6, P7) -> R {
     return object : (P1, P2, P3, P4, P5, P6, P7) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4, P5, P6, P7) -> R), MemoizeKey7<P1, P2, P3, P4, P5, P6, P7, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4, P5, P6, P7) -> R), MemoizeKey7<P1, P2, P3, P4, P5, P6, P7, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7) = m(MemoizeKey7(p1, p2, p3, p4, p5, p6, p7))
     }
 }
 
-fun <P1, P2, P3, P4, P5, P6, P7, P8, R> ((P1, P2, P3, P4, P5, P6, P7, P8) -> R).memoize(): (P1, P2, P3, P4, P5, P6, P7, P8) -> R {
+fun <P1, P2, P3, P4, P5, P6, P7, P8, R : Any> ((P1, P2, P3, P4, P5, P6, P7, P8) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4, P5, P6, P7, P8) -> R {
     return object : (P1, P2, P3, P4, P5, P6, P7, P8) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4, P5, P6, P7, P8) -> R), MemoizeKey8<P1, P2, P3, P4, P5, P6, P7, P8, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4, P5, P6, P7, P8) -> R), MemoizeKey8<P1, P2, P3, P4, P5, P6, P7, P8, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8) = m(MemoizeKey8(p1, p2, p3, p4, p5, p6, p7, p8))
     }
 }
 
-fun <P1, P2, P3, P4, P5, P6, P7, P8, P9, R> ((P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R).memoize(): (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
+fun <P1, P2, P3, P4, P5, P6, P7, P8, P9, R : Any> ((P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
     return object : (P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R), MemoizeKey9<P1, P2, P3, P4, P5, P6, P7, P8, P9, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4, P5, P6, P7, P8, P9) -> R), MemoizeKey9<P1, P2, P3, P4, P5, P6, P7, P8, P9, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9) = m(MemoizeKey9(p1, p2, p3, p4, p5, p6, p7, p8, p9))
     }
 }
 
-fun <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> ((P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R).memoize(): (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
+fun <P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R : Any> ((P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R).memoize(strategy: MemoizeStrategy = MemoizeStrategy.Memoized): (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
     return object : (P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R {
-        private val m = MemoizedHandler<((P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R), MemoizeKey10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R>, R>(this@memoize)
+        private val m: IMemoizedHandler<((P1, P2, P3, P4, P5, P6, P7, P8, P9, P10) -> R), MemoizeKey10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R>, R> =
+            if (strategy == MemoizeStrategy.Memoized) {
+                MemoizedHandler(this@memoize)
+            } else {
+                LruCacheHandler(this@memoize)
+            }
+
         override fun invoke(p1: P1, p2: P2, p3: P3, p4: P4, p5: P5, p6: P6, p7: P7, p8: P8, p9: P9, p10: P10) = m(
             MemoizeKey10(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10)
         )
@@ -346,16 +412,21 @@ sealed interface MemoizeStrategy {
     data class MemoizeLimitEntry(val maxFunctionCount: Int = 50) : MemoizeStrategy
 }
 
-private class MemoizedHandler<F, in K : MemoizedCall<F, R>, out R>(val f: F) {
+private sealed interface IMemoizedHandler<F, in K : MemoizedCall<F, R>, out R> {
+    operator fun invoke(k: K): R
+}
+
+private class MemoizedHandler<F, in K : MemoizedCall<F, R>, out R>(val f: F) : IMemoizedHandler<F, K, R> {
     private val m = ConcurrentHashMap<K, R>()
-    operator fun invoke(k: K): R {
+    override operator fun invoke(k: K): R {
         return m.getOrPut(k, { k(f) })
     }
 }
 
-private class LruCacheHandler<F, in K : MemoizedCall<F, R>, out R : Any>(val f: F, maxSize: Int = 50) {
+private class LruCacheHandler<F, in K : MemoizedCall<F, R>, out R : Any>(val f: F, maxSize: Int = 50) :
+    IMemoizedHandler<F, K, R> {
     private val c = lruCache<K, R>(maxSize = maxSize, create = { k -> k(f) })
-    operator fun invoke(k: K): R {
+    override operator fun invoke(k: K): R {
         return c[k] ?: k(f)
     }
 }
