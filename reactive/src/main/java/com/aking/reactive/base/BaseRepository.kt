@@ -23,9 +23,9 @@ abstract class BaseRepository : Closeable {
      * @param requestBlock 请求的整体逻辑
      * @return T
      */
-    protected suspend inline fun <T> request(
+    protected suspend fun <T> request(
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
-        crossinline requestBlock: suspend () -> T
+        requestBlock: suspend () -> T
     ): T = withContext(dispatcher) { requestBlock.invoke() }
 
     /**
